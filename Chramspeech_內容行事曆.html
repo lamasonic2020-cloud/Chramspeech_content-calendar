@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chramspeech | 內容行事曆</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1A1814;--paper:#FAF8F5;--sage:#4A6741;--sage-l:#EAF0E8;--sage-d:#2D4028;--clay:#C4714A;--clay-l:#FAF0EB;--clay-d:#8B3D1A;--slate:#5A6470;--slate-l:#EEF0F2;--gold:#B8A060;--gold-l:#FAF5E8;--live:#D63F3F;--live-l:#FFF0F0;--grn:#00A651;--grn-l:#E6F7EF;--bd:#E2DDD8;--bd2:#EDE9E4;--r:8px;--rl:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Noto Sans TC",sans-serif;background:var(--paper);color:var(--ink);font-size:13px;line-height:1.6;min-height:100vh}
+.hd{padding:18px 28px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:#fff}
+.hlogo{display:flex;align-items:baseline;gap:10px}
+.hbrand{font-family:"DM Serif Display",serif;font-size:20px}
+.htagline{font-size:11px;color:var(--slate);letter-spacing:.06em;font-family:"DM Mono",monospace}
+.htag{font-size:11px;background:var(--sage-l);color:var(--sage-d);border:1px solid var(--sage);padding:3px 12px;border-radius:20px;font-weight:500}
+.wrap{display:grid;grid-template-columns:1fr 330px;min-height:calc(100vh - 57px)}
+.left{padding:20px 28px;border-right:1px solid var(--bd)}
+.right{background:#fff}
+.chead{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.cn{width:28px;height:28px;border:1px solid var(--bd);border-radius:6px;background:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--slate)}
+.cn:hover{border-color:var(--sage);color:var(--sage)}
+.cmo{font-family:"DM Serif Display",serif;font-size:18px;flex:1}
+.cphase{font-size:10px;font-family:"DM Mono",monospace;color:var(--clay);background:var(--clay-l);border:1px solid rgba(196,113,74,.3);padding:3px 10px;border-radius:20px}
+.leg{display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--slate);font-family:"DM Mono",monospace}
+.ld{width:7px;height:7px;border-radius:2px}
+.wds{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px}
+.wd{text-align:center;font-size:10px;color:var(--slate);padding:4px 0;font-family:"DM Mono",monospace}
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cell{background:#fff;border:1px solid var(--bd2);border-radius:var(--r);min-height:76px;cursor:pointer;transition:border-color .12s,background .12s;overflow:hidden}
+.cell:hover{border-color:var(--sage)}
+.cell.today{border-color:var(--clay)!important;border-width:1.5px}
+.cell.active{border-color:var(--sage)!important;background:var(--sage-l)}
+.cell.empty{border:none;background:transparent;cursor:default;min-height:0}
+.cell.empty:hover{border:none}
+.cell.hlive{border-color:var(--live)!important}
+.cell.hsales{border-color:var(--gold)!important}
+.cnum{padding:5px 7px 3px;display:flex;justify-content:space-between;align-items:center}
+.cdn{font-size:11px;font-weight:500;font-family:"DM Mono",monospace}
+.cell.today .cdn{color:var(--clay)}
+.ctod{font-size:9px;background:var(--clay);color:#fff;padding:1px 4px;border-radius:4px;font-weight:500;margin-left:3px}
+.cdots{display:flex;gap:2px}
+.dot{width:4px;height:4px;border-radius:50%}
+.ds{background:var(--sage)}.dc{background:var(--gold)}.dr{background:var(--clay)}.dl{background:var(--live)}.dn{background:var(--grn)}
+.ctags{padding:1px 6px 5px;display:flex;flex-direction:column;gap:2px}
+.ctag{font-size:9px;padding:2px 5px;border-radius:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;font-family:"DM Mono",monospace}
+.ts{background:var(--sage-l);color:var(--sage-d)}.tc{background:var(--gold-l);color:#6B5010}.tr{background:var(--clay-l);color:var(--clay-d)}.tl{background:var(--live-l);color:var(--live)}.tn{background:var(--grn-l);color:#007A3D}
+.cmore{font-size:9px;color:var(--slate);padding:0 6px 3px;font-family:"DM Mono",monospace}
+.det{display:flex;flex-direction:column;height:calc(100vh - 57px);position:sticky;top:0}
+.det-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:40px 24px;text-align:center;color:var(--slate);font-size:13px;line-height:1.7}
+.det-head{padding:18px 20px 14px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.det-date{font-family:"DM Serif Display",serif;font-size:18px}
+.det-ph{font-size:10px;font-family:"DM Mono",monospace;margin-top:3px}
+.det-body{padding:14px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.tcard{border:1px solid var(--bd2);border-radius:var(--rl);overflow:hidden}
+.tcard.clive{border-color:var(--live)}.tcard.csales{border-color:var(--gold)}
+.tcard-head{padding:7px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--bd2)}
+.tbadge{font-size:9px;font-family:"DM Mono",monospace;font-weight:500;padding:2px 7px;border-radius:3px;flex-shrink:0}
+.tbs{background:var(--sage-l);color:var(--sage-d)}.tbc{background:var(--gold-l);color:#6B5010}.tbr{background:var(--clay-l);color:var(--clay-d)}.tbl{background:var(--live-l);color:var(--live)}.tbsal{background:#FFF8E6;color:#8B6000;border:1px solid var(--gold)}.tbn{background:var(--grn-l);color:#007A3D}
+.tlabel{font-size:12px;font-weight:500}
+.fw-wrap{padding:10px 12px;display:flex;flex-direction:column;gap:7px}
+.fw-row{display:flex;gap:8px;align-items:flex-start}
+.fw-tag{font-size:9px;font-family:"DM Mono",monospace;font-weight:500;padding:2px 6px;border-radius:3px;flex-shrink:0;margin-top:2px;line-height:1.5}
+.fws .fw-tag{background:#FFF3EA;color:var(--clay-d)}.fwp .fw-tag{background:var(--sage-l);color:var(--sage-d)}.fwc .fw-tag{background:#EEF0F8;color:#3D2980}
+.fw-text{font-size:12px;line-height:1.65}
+.sep{border:none;border-top:1px dashed var(--bd);margin:0}
+.t-simple{padding:10px 12px;font-size:12px;line-height:1.6}
+.t-sub{font-size:11px;color:var(--slate);margin-top:4px;padding-left:8px;border-left:2px solid var(--bd)}
+.pha{color:var(--clay)}.phb{color:var(--sage)}.phc{color:#7A5EA0}.phd{color:var(--live)}.phe{color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="hd">
+  <div class="hlogo"><div class="hbrand">Chramspeech</div><div class="htagline">Content Calendar 2026</div></div>
+  <div class="htag">5/15 &mdash; 6/25</div>
+</div>
+<div class="wrap">
+  <div class="left">
+    <div class="chead">
+      <button class="cn" onclick="pm()">&#8249;</button>
+      <div class="cmo" id="cmo"></div>
+      <div class="cphase" id="cphase"></div>
+      <button class="cn" onclick="nm()">&#8250;</button>
+    </div>
+    <div class="leg">
+      <div class="li"><div class="ld" style="background:var(--sage)"></div>限動</div>
+      <div class="li"><div class="ld" style="background:var(--gold)"></div>輪播</div>
+      <div class="li"><div class="ld" style="background:var(--clay)"></div>Reels</div>
+      <div class="li"><div class="ld" style="background:var(--live)"></div>直播/銷講</div>
+      <div class="li"><div class="ld" style="background:var(--grn)"></div>LINE</div>
+    </div>
+    <div class="wds"><div class="wd">SUN</div><div class="wd">MON</div><div class="wd">TUE</div><div class="wd">WED</div><div class="wd">THU</div><div class="wd">FRI</div><div class="wd">SAT</div></div>
+    <div class="cgrid" id="cgrid"></div>
+  </div>
+  <div class="right"><div class="det" id="det"><div class="det-empty">&#9728;<br>點選左側日期<br>查看當天內容方向</div></div></div>
+</div>
+<textarea id="jd" style="display:none">{"2026-05-15": {"ph": "A", "items": [{"t": "c", "lb": "輪播①", "desc": "I人聊天卡住，通常卡在這個地方", "sub": "5格。具體說那個卡點是什麼，每格一個場景"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "你站在一群人旁邊，聽他們聊了十分鐘，沒有說上一句話", "proof": "開口之前你算過了：這句話夠不夠有趣、時機對不對、說錯了怎麼辦", "cta": "留言「開口」，我把LINE社群連結傳給你"}}]}, "2026-05-16": {"ph": "A", "items": [{"t": "l", "lb": "直播 ft. 唐芯 21:00", "desc": "她曾把放牛班教進資優班：很多人不是沒能力，是不會表達自己 ft. 唐芯", "sub": "訪談唐芯故事為主。放牛班轉折加背後表達邏輯加給I人的話"}, {"t": "s", "lb": "IG 限動（直播預告）", "fw": {"story": "今晚來的老師，把放牛班的孩子帶進資優班。她說那些孩子一直都聽得懂，只是沒有人聽得懂他們", "proof": "這件事跟說話有一樣的邏輯", "cta": "今晚21:00直播。連結在限動"}}]}, "2026-05-17": {"ph": "A", "items": [{"t": "r", "lb": "Reels① 直播精華", "desc": "那些孩子學會的，是讓別人聽懂他們", "sub": "剪昨晚最有共鳴的一段，30-60秒"}, {"t": "s", "lb": "IG 限動（直播後）", "fw": {"story": "昨晚截圖最多的一段：那個孩子說話的方式換了，老師第一次沒有走神", "proof": "說話的方式換了，聽的人才跟上來", "cta": "留言「開口」，我把LINE社群連結傳給你"}}]}, "2026-05-18": {"ph": "A", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "你說了一段話，對方點個頭，然後換話題", "proof": "說話的內容沒問題。是你說完之後沒有給對方一個可以接的地方", "cta": "留言「聊天」，我把LINE社群連結傳給你"}}]}, "2026-05-19": {"ph": "A", "items": [{"t": "c", "lb": "輪播②", "desc": "I人說話，其實有E人沒有的優勢", "sub": "拆解3個常見誤解，最後一格說I人真正的強項在哪"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "你試過用外向的方式聊天，撐了一個小時，回家很累", "proof": "那個累，是方式不對的訊號", "cta": "今天輪播說了I人說話的3個誤解。去看看，然後留言「I人」進LINE社群"}}]}, "2026-05-20": {"ph": "A", "items": [{"t": "n", "lb": "LINE 互動①", "desc": "本週問卷：你最怕哪個社交場合？A聚會 B一對一 C工作場合 D陌生人。兩天後針對最多人的場合給一個具體方法"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "你看到想認識的人，一直在旁邊等，等到他走了", "proof": "最後沒有開口，通常不是時機不對，是你在保護自己", "cta": "留言「練習」，我把LINE社群連結傳給你"}}]}, "2026-05-21": {"ph": "A", "items": [{"t": "r", "lb": "Reels②", "desc": "你說完對方沒反應，問題在這裡", "sub": "說為什麼說完沒反應，30-60秒，結尾帶一個方向"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "群體裡大家都在聊，你在旁邊聽", "proof": "你有話想說，只是沒有一個地方練習過怎麼說出去", "cta": "留言「開口」，我把LINE社群連結傳給你"}}]}, "2026-05-22": {"ph": "B", "items": [{"t": "c", "lb": "輪播③", "desc": "聊天冷掉的原因，幾乎都是同一個", "sub": "說接話的邏輯：接情緒比接資訊有用，舉3個場景對比"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "對方說最近好累，你說辛苦了，然後兩個人都沉默了", "proof": "你回應了他說的事，他想要的是有人接住他說話時的感覺", "cta": "今天輪播說了怎麼接話。去看看，然後留言「接話」進LINE社群"}}]}, "2026-05-23": {"ph": "B", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "有人問我：你是不是天生就比較會聊天", "proof": "我練的時間比你早，方式跟你現在用的不一樣", "cta": "留言「練習」，我把LINE社群連結傳給你"}}]}, "2026-05-24": {"ph": "B", "items": [{"t": "r", "lb": "Reels③", "desc": "一對一比群體更難開口，原因是這個", "sub": "說一對一的壓力從哪來，怎麼讓那個壓力小一點，30-60秒"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "群體裡你還行，一對一你反而更容易卡", "proof": "一對一沒有人幫你把沉默填掉，所有壓力都在你身上", "cta": "今天Reels說了怎麼讓一對一不那麼緊。去看，然後留言「一對一」進LINE社群"}}]}, "2026-05-25": {"ph": "B", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "你認識一種人：他不怎麼說話，但每次聊完你都想再找他", "proof": "他給你的感覺是，說什麼都可以，沒有什麼會被評價", "cta": "留言「聊天」，我把LINE社群連結傳給你"}}]}, "2026-05-26": {"ph": "B", "items": [{"t": "c", "lb": "輪播④", "desc": "讓對方多說的方式，跟問問題沒什麼關係", "sub": "說給空間和追問的差別，3種讓對方覺得可以說的回應"}, {"t": "n", "lb": "LINE 互動②", "desc": "本週主題：說一個你很難開口的場景，週五針對最多人提到的場景給方法"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "你一直找話題，最後發現都是你在說", "proof": "對方附和，是因為他還不確定說自己的事你會怎麼反應", "cta": "今天輪播說了怎麼讓對方願意多說。去看，然後留言「說話」進LINE社群"}}]}, "2026-05-27": {"ph": "B", "items": [{"t": "r", "lb": "Reels④", "desc": "對方一直「嗯嗯」帶過，問題在你說話的結構", "sub": "說被帶過背後的原因，具體說什麼結構讓對方接不住，30-60秒"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "你說完，對方回了一個「嗯」，然後看手機", "proof": "你給了他一個句子，但那個句子沒有讓他知道接下來該往哪說", "cta": "今天Reels說了為什麼這個一直發生。去看，然後留言「接話」進LINE社群"}}]}, "2026-05-28": {"ph": "B", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "你認識他快一年了，每次見面還是在聊工作跟天氣", "proof": "關係停在表面，通常是因為你還沒說過一件他以為你不會說的事", "cta": "留言「關係」，我把LINE社群連結傳給你"}}]}, "2026-05-29": {"ph": "B", "items": [{"t": "c", "lb": "輪播⑤", "desc": "從陌生人變熟，轉折點通常是同一件事", "sub": "說熟悉感怎麼建立：具體說那個轉折是什麼"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "你跟他認識兩年，但每次出去還是叫不太出口說「你是我朋友」", "proof": "熟悉感不靠見面次數累積，靠的是某一次你說了一句他沒預期你會說的話", "cta": "今天輪播說了那個轉折是什麼。去看，然後留言「熟悉」進LINE社群"}}]}, "2026-05-30": {"ph": "B", "items": [{"t": "n", "lb": "LINE 互動③", "desc": "這週試試：在一個對話裡說一件你平常不太會說的真實的事。週末回來說說發生了什麼"}, {"t": "r", "lb": "Reels⑤", "desc": "你以為他不理你，其實他也在等你先開口", "sub": "說兩個都在等的場景，怎麼打破，30-60秒"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "你喜歡一個人，以為他不太想理你。後來才知道他在等你先說話", "proof": "兩個人都在保護自己，結果什麼都沒有發生", "cta": "留言「練習」，我把LINE社群連結傳給你"}}]}, "2026-05-31": {"ph": "B", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "週日一句話：每次開口都聊得完美，沒有這種事", "proof": "每次比上次多說一點，就夠了", "cta": "留言「開口」，我把LINE社群連結傳給你"}}]}, "2026-06-01": {"ph": "C", "items": [{"t": "c", "lb": "輪播⑥", "desc": "容易緊張、不敢開口的人，需要的是這個", "sub": "說什麼是真正能幫到這群人的——預告社群概念，製造好奇"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "我在做一個給不敢開口的人的地方，這兩週一直在設計", "proof": "進去的人可以用自己的步調練，不用一開始就表現", "cta": "有興趣的留言「想知道」，我把LINE社群連結傳給你"}}]}, "2026-06-02": {"ph": "C", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "說你為什麼做這件事：是因為你自己也走過那段什麼都說不出口的時間", "proof": "你做這個，是因為你知道那個卡住的感覺", "cta": "留言「想練」，我把LINE社群連結傳給你"}}]}, "2026-06-03": {"ph": "C", "items": [{"t": "n", "lb": "LINE 互動④", "desc": "銷講前暖場：說一個你最怕的說話場景，明天有東西要告訴你"}, {"t": "s", "lb": "IG 限動（銷講前一天）", "fw": {"story": "明天要說一件事。說一個「如果當時有這樣的地方就好了」的故事", "proof": "你做這個，不是因為你想教課", "cta": "明天10點，在這裡。連結在限動"}}]}, "2026-06-04": {"ph": "D", "items": [{"t": "l", "lb": "銷講 Skool 年訂閱", "desc": "Chramspeech 社群年訂閱方案正式發布", "sub": "銷講結構：痛點共鳴→社群是什麼→裡面有什麼→適合誰→方案→早鳥→填表"}, {"t": "c", "lb": "輪播⑦", "desc": "Chramspeech 是什麼：一個讓你每週練說話的地方", "sub": "6格說清楚：是什麼、適合誰、裡面有什麼、節奏、方案、怎麼加入"}, {"t": "s", "lb": "IG 限動（開賣日）", "fw": {"story": "Chramspeech 社群年訂閱，今天開放", "proof": "每週有任務，有人陪你練，你試了就有回饋", "cta": "早鳥限前30名。留言「加入」，我把連結傳給你"}}]}, "2026-06-05": {"ph": "D", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "開放之後最多人問的：我很內向，進去要怎麼參與", "proof": "你可以先看，等你開口的時候再開口", "cta": "留言「加入」，我把諮詢表單傳給你"}}]}, "2026-06-06": {"ph": "D", "items": [{"t": "r", "lb": "Reels⑥", "desc": "你說完之後，後悔的通常不是說了什麼", "sub": "說怕開口的代價，具體，結尾導社群"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "說一個開口之後發現沒那麼難的故事——自己的或你認識的人的", "proof": "開完口的人，很少說早知道就不要說", "cta": "留言「加入」，我把LINE社群連結傳給你"}}]}, "2026-06-07": {"ph": "D", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "第一批加入的人說：我以為只有我這樣", "proof": "知道不只你一個人是這樣，有時候就夠了", "cta": "留言「加入」，我把諮詢表單傳給你"}}]}, "2026-06-08": {"ph": "D", "items": [{"t": "c", "lb": "輪播⑧", "desc": "決心沒用，你需要的是一個讓你可以試的地方", "sub": "說為什麼「再勇敢一點」這句話沒什麼用，環境比意志力重要"}, {"t": "n", "lb": "LINE 互動⑤", "desc": "加入之後你最想練的一件事是什麼"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "說你設計這個社群時，心裡想的那種人", "proof": "知道自己可以更自在，但一個人找不到怎麼練", "cta": "留言「加入」，我把諮詢表單傳給你"}}]}, "2026-06-09": {"ph": "D", "items": [{"t": "r", "lb": "Reels⑦", "desc": "我開始不怕了，過程是這樣的", "sub": "說改變的過程，具體，讓觀望者感覺可以做到，結尾導社群"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "有人說：我覺得我就是這種人，不可能改", "proof": "I人在關係裡有不同的方式，找到那個方式之前一直覺得很吃虧", "cta": "留言「加入」，我把LINE社群連結傳給你"}}]}, "2026-06-10": {"ph": "D", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "倒數。說一個「等你準備好」vs「先進去再說」的差別", "proof": "進去之後你會發現，你準備好了多少跟你改變多少關係不大", "cta": "早鳥明天截止。留言「加入」，我直接回你"}}]}, "2026-06-11": {"ph": "D", "items": [{"t": "r", "lb": "Reels⑧", "desc": "開始不需要準備好", "sub": "最後一天早鳥，說等的代價，直接，結尾導連結"}, {"t": "n", "lb": "LINE 互動⑥", "desc": "早鳥最後一天。還在考慮的說一聲，我直接回你"}, {"t": "s", "lb": "IG 限動（早鳥截止）", "fw": {"story": "最後一天", "proof": "你繼續等，說話這件事不會自己改變", "cta": "今晚早鳥截止。留言「加入」，我把連結傳給你"}}]}, "2026-06-12": {"ph": "E", "items": [{"t": "c", "lb": "輪播⑨", "desc": "第一次開口，可以從這3個地方開始", "sub": "具體可操作，每格一個方法，今天就可以用"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "社群第一週：成員說，任務比想像中容易", "proof": "第一次開口之後，第二次就沒那麼重了", "cta": "今天輪播說了第一次開口從哪裡開始。去看，然後留言「開口」進LINE社群"}}]}, "2026-06-13": {"ph": "E", "items": [{"t": "r", "lb": "Reels⑨", "desc": "讓對方覺得跟你說話很鬆，你做了什麼", "sub": "說讓聊天舒服的核心，不是有趣，是讓對方覺得可以放鬆"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "成員說：我問了一個問題，對方聊了10分鐘", "proof": "對方有話說，是因為你給了他一個可以說的地方", "cta": "留言「練習」，我把LINE社群連結傳給你"}}]}, "2026-06-14": {"ph": "E", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "週日一句話：每次開口都聊得漂亮，不是目標", "proof": "每次說完之後不後悔，就夠了", "cta": "留言「開口」，我把LINE社群連結傳給你"}}]}, "2026-06-15": {"ph": "E", "items": [{"t": "c", "lb": "輪播⑩", "desc": "讓對方說得更多，跟找話題沒關係", "sub": "說舒服聊天的邏輯，給一個今天可以試的方法"}, {"t": "n", "lb": "LINE 互動⑦", "desc": "你說話最有進步的一件事是什麼"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "說一個你很怕，結果說出去之後鬆了一口氣的時候", "proof": "說完之後才知道沒那麼難，說之前永遠覺得很難", "cta": "留言「聊天」，我把LINE社群連結傳給你"}}]}, "2026-06-16": {"ph": "E", "items": [{"t": "r", "lb": "Reels⑩", "desc": "兩個都不敢開口的人——誰先說？", "sub": "說那個互相等的場景，怎麼打破，30-60秒"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "你以為他不理你，後來才知道他也在等", "proof": "兩個人都在等，結果沒有發生", "cta": "今天Reels說了怎麼打破這個。去看，然後留言「開口」進LINE社群"}}]}, "2026-06-17": {"ph": "E", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "有人說：我覺得自己很無聊，沒什麼可以說的", "proof": "你有的故事，你覺得太普通了，但對方沒聽過", "cta": "留言「練習」，我把LINE社群連結傳給你"}}]}, "2026-06-18": {"ph": "E", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "說這個月你看到的一個改變——不是成果，是某一個瞬間", "proof": "說話的感覺改了，通常是某一個很小的地方", "cta": "留言「開口」，我把LINE社群連結傳給你"}}]}, "2026-06-19": {"ph": "E", "items": [{"t": "c", "lb": "輪播⑪", "desc": "讓人記住你，靠的是這一件事", "sub": "說讓人記住你的說話方式：敢讓別人看見你真實的喜好跟感受"}, {"t": "n", "lb": "LINE 互動⑧", "desc": "分享一件最近你說出去了、沒想像中糟的事"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "讓你一直記得的人，通常說話不多，但他說過幾句你沒忘", "proof": "那幾句話，讓你覺得這個人有自己的東西", "cta": "今天輪播說了讓人記住你的說話方式。去看，然後留言「魅力」進LINE社群"}}]}, "2026-06-20": {"ph": "E", "items": [{"t": "r", "lb": "Reels⑪", "desc": "I人說話，有一個E人沒有的東西", "sub": "說I人的說話優勢：想清楚再說，每句話更準，讓I人感覺到自己的位置"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "說話多的人讓你記住的不多，說得少但說到你心裡的人你一直記得", "proof": "準，比多更有用", "cta": "今天Reels說了I人說話的優勢。去看，然後留言「I人」進LINE社群"}}]}, "2026-06-21": {"ph": "E", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "週日一句話：你們都不說話，但不覺得尷尬，是一種很好的感覺", "proof": "不怕沉默，是兩個人走到了那個地方的證明", "cta": "留言「練習」，我把LINE社群連結傳給你"}}]}, "2026-06-22": {"ph": "E", "items": [{"t": "c", "lb": "輪播⑫", "desc": "7月要練的事：讓對話有來有往", "sub": "說7月主題，讓還沒加入的人看見社群在練什麼"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "6月快完了。說一個這個月讓你印象深的瞬間", "proof": "你的改變，是做這件事讓我繼續的原因", "cta": "留言「加入」，我把LINE社群連結傳給你"}}]}, "2026-06-23": {"ph": "E", "items": [{"t": "r", "lb": "Reels⑫", "desc": "練了一個月感覺沒什麼改變，通常是這個原因", "sub": "說方式錯跟方式對的差別，帶方向，結尾導社群"}, {"t": "n", "lb": "LINE 互動⑨", "desc": "6月回顧：這個月說話最讓你印象深刻的一件事"}, {"t": "s", "lb": "IG 限動", "fw": {"story": "有人說：練了一個月，感覺跟以前差不多", "proof": "改變有時候是某一天你才發現的，不是每天都看得見", "cta": "留言「練習」，我把LINE社群連結傳給你"}}]}, "2026-06-24": {"ph": "E", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "說你做這件事讓你最有感覺的一刻——一個人說了某句話", "proof": "他鬆了一口氣，那個就是了", "cta": "留言「加入」，我把LINE社群連結傳給你"}}]}, "2026-06-25": {"ph": "E", "items": [{"t": "s", "lb": "IG 限動", "fw": {"story": "6月最後一天。說一個讓你記得的故事", "proof": "你說出去了多少，就改變了多少", "cta": "留言「開口」，我把LINE社群連結傳給你"}}, {"t": "n", "lb": "LINE 互動⑩", "desc": "7月主題正式預告：聊天接話，讓對話有來有往。下週開始"}]}}</textarea>
+<script>
+var D = JSON.parse(document.getElementById('jd').textContent);
+var MN = ['一','二','三','四','五','六','七','八','九','十','十一','十二'];
+var WN = ['日','一','二','三','四','五','六'];
+var PHL = {A:'Phase A · 共鳴期',B:'Phase B · 方法期',C:'Phase C · 預熱期',D:'Phase D · 開賣期',E:'Phase E · 穩定期'};
+var PHC = {A:'pha',B:'phb',C:'phc',D:'phd',E:'phe'};
+var cy=2026, cm=4, sel=null;
+function pad(n){return n<10?'0'+n:''+n;}
+function tdc(t){return t=='s'?'ds':t=='c'?'dc':t=='r'?'dr':t=='l'?'dl':'dn';}
+function tcc(t){return t=='s'?'ts':t=='c'?'tc':t=='r'?'tr':t=='l'?'tl':'tn';}
+function tbc(t){return t=='s'?'tbs':t=='c'?'tbc':t=='r'?'tbr':t=='l'?'tbl':'tbn';}
+function tbt(t){return t=='s'?'限動':t=='c'?'輪播':t=='r'?'Reels':t=='l'?'直播':'LINE';}
+function uniq(a){var s={},r=[];for(var i=0;i<a.length;i++){if(!s[a[i]]){s[a[i]]=1;r.push(a[i]);}}return r;}
+function mk(tag,cls){var el=document.createElement(tag);if(cls)el.className=cls;return el;}
+function tx(str){return document.createTextNode(str);}
+
+function renderCal(){
+  document.getElementById('cmo').textContent = cy+' 年 '+MN[cm]+' 月';
+  var pfx = cy+'-'+pad(cm+1);
+  var phs = [];
+  for(var k in D){if(k.indexOf(pfx)===0) phs.push(D[k].ph);}
+  phs = uniq(phs);
+  document.getElementById('cphase').textContent = phs.map(function(p){
+    var l=PHL[p]; return l?l.split('·')[1].trim():'';
+  }).filter(function(x){return x;}).join(' / ');
+  var first=new Date(cy,cm,1).getDay();
+  var days=new Date(cy,cm+1,0).getDate();
+  var td=new Date();
+  var tds=td.getFullYear()+'-'+pad(td.getMonth()+1)+'-'+pad(td.getDate());
+  var grid=document.getElementById('cgrid');
+  grid.innerHTML='';
+  for(var i=0;i<first;i++){var emp=mk('div','cell empty');grid.appendChild(emp);}
+  for(var d=1;d<=days;d++){
+    var ds=cy+'-'+pad(cm+1)+'-'+pad(d);
+    var dd=D[ds];
+    var isT=(ds===tds), isA=(ds===sel);
+    var hasLive=false, hasSales=false;
+    if(dd){for(var j=0;j<dd.items.length;j++){var it=dd.items[j];if(it.t==='l'){if(it.lb.indexOf('銷講')>=0)hasSales=true;else hasLive=true;}}}
+    var cls='cell'+(isT?' today':'')+(isA?' active':'')+(hasSales?' hsales':hasLive?' hlive':'');
+    var cell=mk('div',cls);
+    cell.setAttribute('data-ds',ds);
+    cell.onclick=function(){pick(this.getAttribute('data-ds'));};
+    var cnum=mk('div','cnum');
+    var cdn=mk('span','cdn'); cdn.appendChild(tx(''+d));
+    if(isT){var ctod=mk('span','ctod');ctod.appendChild(tx('今'));cdn.appendChild(ctod);}
+    cnum.appendChild(cdn);
+    var cdots=mk('div','cdots');
+    if(dd){var types=uniq(dd.items.map(function(x){return x.t;}));for(var j=0;j<types.length;j++){var dot=mk('div','dot '+tdc(types[j]));cdots.appendChild(dot);}}
+    cnum.appendChild(cdots);
+    cell.appendChild(cnum);
+    if(dd){
+      var ctags=mk('div','ctags');
+      var lim=dd.items.length>2?2:dd.items.length;
+      for(var k=0;k<lim;k++){
+        var tag=mk('div','ctag '+tcc(dd.items[k].t));
+        var lb=dd.items[k].lb;
+        tag.appendChild(tx(lb.length>15?lb.slice(0,14)+'…':lb));
+        ctags.appendChild(tag);
+      }
+      if(dd.items.length>2){var cm2=mk('div','cmore');cm2.appendChild(tx('+'+(dd.items.length-2)));ctags.appendChild(cm2);}
+      cell.appendChild(ctags);
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function pick(ds){
+  sel=ds; renderCal();
+  var dd=D[ds];
+  var det=document.getElementById('det');
+  det.innerHTML='';
+  if(!dd){
+    var emp=mk('div','det-empty'); emp.appendChild(tx('☁')); emp.appendChild(document.createElement('br')); emp.appendChild(tx('這天沒有排定任務'));
+    det.appendChild(emp); return;
+  }
+  var d=new Date(ds);
+  var head=mk('div','det-head');
+  var ddate=mk('div','det-date');
+  ddate.appendChild(tx((d.getMonth()+1)+' 月 '+d.getDate()+' 日（週'+WN[d.getDay()]+'）'));
+  head.appendChild(ddate);
+  var dph=mk('div','det-ph '+(PHC[dd.ph]||''));
+  dph.appendChild(tx(PHL[dd.ph]||''));
+  head.appendChild(dph);
+  det.appendChild(head);
+  var body=mk('div','det-body');
+  for(var i=0;i<dd.items.length;i++){
+    var item=dd.items[i];
+    var isSales=(item.t==='l'&&item.lb.indexOf('銷講')>=0);
+    var isLive=(item.t==='l'&&!isSales);
+    var cardCls='tcard'+(isSales?' csales':isLive?' clive':'');
+    var card=mk('div',cardCls);
+    var cardHead=mk('div','tcard-head');
+    var badge=mk('span',isSales?'tbadge tbsal':'tbadge '+tbc(item.t));
+    badge.appendChild(tx(isSales?'銷講':tbt(item.t)));
+    cardHead.appendChild(badge);
+    var lbl=mk('span','tlabel'); lbl.appendChild(tx(item.lb));
+    cardHead.appendChild(lbl);
+    card.appendChild(cardHead);
+    if(item.fw){
+      var fw=mk('div','fw-wrap');
+      function addRow(cls,tag,text){var row=mk('div','fw-row '+cls);var ft=mk('span','fw-tag');ft.appendChild(tx(tag));row.appendChild(ft);var ft2=mk('span','fw-text');ft2.appendChild(tx(text));row.appendChild(ft2);return row;}
+      fw.appendChild(addRow('fws','故事',item.fw.story));
+      fw.appendChild(mk('hr','sep'));
+      fw.appendChild(addRow('fwp','佐證',item.fw.proof));
+      fw.appendChild(mk('hr','sep'));
+      fw.appendChild(addRow('fwc','CTA',item.fw.cta));
+      card.appendChild(fw);
+    } else {
+      var simp=mk('div','t-simple'); simp.appendChild(tx(item.desc));
+      if(item.sub){var sub=mk('div','t-sub');sub.appendChild(tx(item.sub));simp.appendChild(sub);}
+      card.appendChild(simp);
+    }
+    body.appendChild(card);
+  }
+  det.appendChild(body);
+}
+
+function pm(){if(cm===0){cm=11;cy--;}else{cm--;}sel=null;renderCal();var det=document.getElementById('det');det.innerHTML='<div class="det-empty">&#9728;<br>點選左側日期<br>查看當天內容方向</div>';}
+function nm(){if(cm===11){cm=0;cy++;}else{cm++;}sel=null;renderCal();var det=document.getElementById('det');det.innerHTML='<div class="det-empty">&#9728;<br>點選左側日期<br>查看當天內容方向</div>';}
+renderCal();
+</script>
+</body>
+</html>
